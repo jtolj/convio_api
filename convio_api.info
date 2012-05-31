@@ -1,0 +1,6 @@
+name = Convio API
+description = API to connect with a Convio site
+core = 7.x
+package = Convio
+
+files[] = convio_api.class.inc

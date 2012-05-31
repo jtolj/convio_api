@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Implements hook_perm().
+ */
+function convio_api_perm() {
+  return array(
+    'administer convio api settings',
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function convio_api_menu() {
+  $items = array();
+  
+  $items['admin/config/system/convio_api'] = array(
+    'title' => 'Convio API',
+    'description' => 'Manage settings to connect with a Convio Site',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('convio_api_admin_site_settings'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer convio api settings'),
+    'file' => 'convio_api.admin.inc',
+  );
+  
+  return $items;
+}
+
+/**
+ * Build the configuration array for a convio api request.
+ *
+ * @return array
+ *   An array containing the configuration for a Convio API request.
+ *   Includes the keys:
+ *     - convio_api_username
+ *     - convio_api_password
+ *     - convio_api_key
+ *     - convio_api_site_id
+ *     - convio_api_site_url
+ *     - convio_api_client_uri
+ *     - convio_api_server_uri
+ */
+function convio_api_get_configuration() {
+  static $config;
+  
+  if (!$config) {
+    $config = array(
+      'convio_api_username' => variable_get('convio_api_username', ''),
+      'convio_api_password' => variable_get('convio_api_password', ''),
+      'convio_api_key' => variable_get('convio_api_key', ''),
+      'convio_api_site_id' => variable_get('convio_api_site_id', ''),
+      'convio_api_site_url' => variable_get('convio_api_site_url', 'https://secure2.convio.net/'),
+    );
+  }
+  return $config;
+}
+
+/**
+ * Perform https request to Convio Site
+ * Return the response that is generated.
+ */
+function convio_api_request($params = array(), $api = 'constituent', $request_type = 'client') {
+  $config = convio_api_get_configuration();
+  try {
+    $convio = new ConvioAPI($api, $request_type, $config);
+    $convio->setParams($params);
+    return $convio->execute();
+  }
+  catch (Exception $e) {
+    watchdog('convio_api', $e->getMessage(), array(), WATCHDOG_ERROR);
+  } 
+}

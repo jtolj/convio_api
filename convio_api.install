@@ -1,0 +1,21 @@
+<?php
+
+
+/**
+ * Implementation of hook_install().
+ */
+function convio_api_install() {
+  
+}
+
+/**
+ * Implmementation of hook_uninstall().
+ */
+function convio_api_uninstall() {
+  variable_del('convio_api_site_id');
+  variable_del('convio_api_key');
+  variable_del('convio_api_username');
+  variable_del('convio_api_password');
+  variable_del('convio_api_email');
+  variable_del('convio_api_site_url');
+}

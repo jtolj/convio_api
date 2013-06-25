@@ -36,7 +36,7 @@ function convio_api_admin_site_settings() {
   
   $form['convio_api_username'] = array(
     '#type' => 'textfield',
-    '#title' => t('Username'),
+    '#title' => t('API Username'),
     '#description' => t('Special administrative account used just for API access'),
     '#default_value' => variable_get('convio_api_username', ''),
     '#size' => 64,
@@ -46,7 +46,7 @@ function convio_api_admin_site_settings() {
   
   $form['convio_api_password'] = array(
     '#type' => 'password',
-    '#title' => t('Password'),
+    '#title' => t('API Password'),
     '#required' => TRUE,
   );
 
@@ -67,6 +67,11 @@ function convio_api_admin_site_settings() {
  */
 function convio_api_admin_site_settings_validate($form, &$form_state) {
   $values = $form_state['values'];
+  if (!preg_match('/^https:\/\//', $values['convio_api_site_url']))
+  {
+    form_set_error('convio_api_site_url', 'Site URL *must* begin with https://');
+    return; // We do not want to send our example request over http!
+  }
   $params = array(
     'method' => 'isEmailValid',
     'login_name' => $values['convio_api_username'],
@@ -77,5 +82,8 @@ function convio_api_admin_site_settings_validate($form, &$form_state) {
   $response = convio_api_request($params, 'constituent', 'server');
   if (!empty($response->error)) {
     form_set_error('', 'Could not connect to Convio API with the information provided. Error was: ' . $response->error);
+  }
+  else {
+    drupal_set_message('Connection to Convio API was successful.');
   }
 }

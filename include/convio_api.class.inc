@@ -1,7 +1,6 @@
 <?php
 
 class ConvioAPI {
-  
   private $api;
   private $api_data = array(
     'address_book' => array('path' => 'AddressBookAPI', 'supported_methods' => array('client')),
@@ -46,6 +45,7 @@ class ConvioAPI {
     $headers = array(
       'Content-Type' => 'application/x-www-form-urlencoded',
     );
+    
     $default_params = array(
       'api_key' => $this->config['convio_api_key'],
       'v' => '1.0',
@@ -58,13 +58,14 @@ class ConvioAPI {
         'login_password' => $this->config['convio_api_password'],
       );
     }
+    
     $params = array_merge($default_params, $this->params);
     
     return drupal_http_request($this->request_url, array('headers' => $headers, 'method' => 'POST', 'data' => http_build_query($params, '', '&')));
   }
 
   private function getUrl() {
-   $method_path = ($this->method === 'client') ? 'CR' : 'SR';
-   return $this->config['convio_api_site_url'] . $this->config['convio_api_site_id'] . '/site/' . $method_path . $this->api_data[$this->api]['path'];
+    $method_path = ($this->method === 'client') ? 'CR' : 'SR';
+    return $this->config['convio_api_site_url'] . $this->config['convio_api_site_id'] . '/site/' . $method_path . $this->api_data[$this->api]['path'];
   }
 }

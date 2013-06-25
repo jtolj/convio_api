@@ -22,7 +22,7 @@ function convio_api_menu() {
     'page arguments' => array('convio_api_admin_site_settings'),
     'access callback' => 'user_access',
     'access arguments' => array('administer convio api settings'),
-    'file' => 'convio_api.admin.inc',
+    'file' => 'include/convio_api.admin.inc',
   );
   
   return $items;
@@ -39,8 +39,7 @@ function convio_api_menu() {
  *     - convio_api_key
  *     - convio_api_site_id
  *     - convio_api_site_url
- *     - convio_api_client_uri
- *     - convio_api_server_uri
+ *     
  */
 function convio_api_get_configuration() {
   static $config;
@@ -58,7 +57,9 @@ function convio_api_get_configuration() {
 }
 
 /**
- * Perform https request to Convio Site
+ * Execute request to Convio API
+ *
+ * @return 
  * Return the response that is generated.
  */
 function convio_api_request($params = array(), $api = 'constituent', $request_type = 'client') {
